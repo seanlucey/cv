@@ -7,3 +7,5 @@ What began as a fun proof-of-concept has become a super nerdy way to distribute 
 For privacy reasons, some personal information is redacted. A full version is available upon request.
 
 [Click Here To View My Resume!](https://github.com/seanlucey/resume/blob/master/resume_cv.pdf)
+
+# Technical Information
