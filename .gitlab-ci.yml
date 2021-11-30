@@ -1,0 +1,51 @@
+# This CI Configuration is responsible for creating an up-to-date XeTeX container, and compiling my resume.
+#
+image: docker:stable
+
+variables:
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+
+stages:
+  - docker_build
+  - docker_release
+  - pdf_compile
+
+docker_build:
+  stage: docker_build
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t $CONTAINER_TEST_IMAGE .
+    - docker push $CONTAINER_TEST_IMAGE
+  only:
+    - docker
+
+docker_release:
+  stage: docker_release
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
+  only:
+    - docker
+  
+pdf_compile:
+  stage: pdf_compile
+  image: registry.gitlab.com/seanlucey/resume:latest
+  script:
+    - xelatex resume_cv.tex
+    - git config --global user.email "$GITLAB_USER_EMAIL"
+    - git config --global user.name "GitLab CI"
+    - git add -f resume_cv.pdf
+    - git commit -m "Committing Updated CV to $CI_COMMIT_REF_SLUG [skip ci]"
+    - git push https://seanlucey:${GITLAB_ACCESS_TOKEN}@gitlab.com/seanlucey/resume.git HEAD:$CI_COMMIT_REF_SLUG
+  artifacts:
+    paths:
+      - "*.pdf"
+  only:
+    - master
