@@ -47,5 +47,3 @@ pdf_compile:
   artifacts:
     paths:
       - "*.pdf"
-  only:
-    - master
