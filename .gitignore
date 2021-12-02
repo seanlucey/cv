@@ -1,0 +1,6 @@
+# Ignore these extensions
+*.log
+*.out
+*.gz
+*.pdf
+*.aux
