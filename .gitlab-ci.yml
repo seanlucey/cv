@@ -9,7 +9,6 @@ variables:
 stages:
   - docker_build
   - docker_release
-  - pdf_compile
 
 docker_build:
   stage: docker_build
@@ -19,5 +18,17 @@ docker_build:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker build -t $CONTAINER_TEST_IMAGE:latest .
     - docker push $CONTAINER_TEST_IMAGE
+  only:
+    - docker
+
+docker_release:
+  stage: docker_release
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
   only:
     - docker
