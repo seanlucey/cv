@@ -32,3 +32,17 @@ docker_release:
     - docker push $CONTAINER_RELEASE_IMAGE
   only:
     - docker
+
+pdf_compile:
+  stage: pdf_compile
+  image: registry.gitlab.com/seanlucey/resume:latest
+  script:
+    - xelatex resume_cv.tex
+    - git config --global user.email "$GITLAB_USER_EMAIL"
+    - git config --global user.name "GitLab CI"
+    - git add -f resume_cv.pdf
+    - git commit -m "Committing Updated CV to $CI_COMMIT_REF_SLUG [skip ci]"
+    - git push https://seanlucey:${GITLAB_ACCESS_TOKEN}@gitlab.com/seanlucey/resume.git HEAD:$CI_COMMIT_REF_SLUG
+  artifacts:
+    paths:
+      - "*.pdf"
