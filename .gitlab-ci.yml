@@ -9,6 +9,7 @@ variables:
 stages:
   - docker_build
   - docker_release
+  - pdf_compile
 
 docker_build:
   stage: docker_build
