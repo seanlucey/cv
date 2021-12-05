@@ -1,5 +1,6 @@
 # This CI Configuration is responsible for creating an up-to-date XeTeX container, and compiling my resume.
 #
+---
 image: docker:stable
 
 variables:
