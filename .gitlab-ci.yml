@@ -48,4 +48,4 @@ pdf_compile:
       - "*.pdf"
 
     only:
-      - master
+      - main
